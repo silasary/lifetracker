@@ -72,7 +72,11 @@ namespace LifeCounter
         private void playerNameChanged(object sender, TextChangedEventArgs e)
         {
             string playerNumber = GetPlayerNumber(sender);
-            File.WriteAllText(playerNumber + "_Name.txt", (sender as TextBox).Text);
+            TextBox textBox = (sender as TextBox);
+            var label = textBox.Tag as string;
+            if (string.IsNullOrEmpty(label))
+                return;
+            File.WriteAllText($"{playerNumber}_{label}.txt", textBox.Text);
             
         }
     }
