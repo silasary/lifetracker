@@ -1,19 +1,7 @@
-﻿using LifeCounter.Behavior;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace LifeCounter
 {
@@ -27,11 +15,11 @@ namespace LifeCounter
             InitializeComponent();
             for (int i = 0; i < 4; i++)
             {
-                string playerNumber = $"Player_{i + 1}";
-                File.WriteAllText(playerNumber + "_Life.txt", "40");
+                var prefix = $"Player_{i + 1}";
+                File.WriteAllText(prefix + "_Life.txt", "40");
                 for (int j = 0; j < 4; j++)
                 {
-                    File.WriteAllText($"{playerNumber}_cmdrDmg_{j + 1}.txt", "0");
+                    File.WriteAllText($"{prefix}_cmdrDmg_{j + 1}.txt", "0");
                 }
             }
         }
@@ -48,36 +36,54 @@ namespace LifeCounter
 
         private void LifeButton_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            string playerNumber = GetPlayerNumber(sender);
-            int total = (sender as LifeButton).LifeTotal;
+            var prefix = GetPlayerNumber(sender);
+            var total = (sender as LifeButton).LifeTotal;
             if (sender is CommanderDamage cmdr)
             {
                 var all = (cmdr.Parent as Grid).Children.OfType<CommanderDamage>().ToArray();
-                int cmdrNumber = 0;
+                var cmdrNumber = 0;
                 for (int i = 0; i < 4; i++)
                 {
                     if (all[i] == sender)
                         cmdrNumber = i + 1;
                 }
-                File.WriteAllText($"{playerNumber}_cmdrDmg_{cmdrNumber}.txt", total.ToString());
+                File.WriteAllText($"{prefix}_cmdrDmg_{cmdrNumber}.txt", total.ToString());
 
             }
             else
             {
-                File.WriteAllText(playerNumber + "_Life.txt", total.ToString());
+                File.WriteAllText(prefix + "_Life.txt", total.ToString());
             }
         }
 
 
         private void playerNameChanged(object sender, TextChangedEventArgs e)
         {
-            string playerNumber = GetPlayerNumber(sender);
-            TextBox textBox = (sender as TextBox);
+            var playerNumber = GetPlayerNumber(sender);
+            var textBox = (sender as TextBox);
             var label = textBox.Tag as string;
             if (string.IsNullOrEmpty(label))
                 return;
             File.WriteAllText($"{playerNumber}_{label}.txt", textBox.Text);
-            
+        }
+
+        private async void textBox1_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            const string FILENAME = "card.jpg";
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                var textBox = (sender as TextBox);
+                var image = await Scryfall.Scryfall.GetCardImageAsync(textBox.Text);
+                if (image == null)
+                {
+                    if (File.Exists(FILENAME))
+                        File.Delete(FILENAME);
+                }
+                else
+                {
+                    File.Copy(image, FILENAME, true);
+                }
+            }
         }
     }
 }

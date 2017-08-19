@@ -43,5 +43,6 @@
             <TextBox x:Name="textBox3_Copy1" HorizontalAlignment="Right" Height="22" TextWrapping="Wrap" Text="Player 4" VerticalAlignment="Top" Width="108" TextChanged="playerNameChanged" AutomationProperties.HelpText="Player Name" Tag="Name"/>
             <TextBox x:Name="textBox3_Copy2" HorizontalAlignment="Right" Height="22" TextWrapping="Wrap" Text="Commander" VerticalAlignment="Top" Width="108" TextChanged="playerNameChanged" Margin="0,25.5,0,0" Tag="cmdr"/>
         </Grid>
+        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="22" Margin="213,460,0,0" TextWrapping="Wrap" Text="CardLookup" VerticalAlignment="Top" Width="155" KeyDown="textBox1_KeyDown"/>
     </Grid>
 </Window>
