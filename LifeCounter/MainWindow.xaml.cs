@@ -1,5 +1,9 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,6 +14,8 @@ namespace LifeCounter
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly WebServer srv;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -22,6 +28,90 @@ namespace LifeCounter
                     File.WriteAllText($"{prefix}_cmdrDmg_{j + 1}.txt", "0");
                 }
             }
+            srv = new WebServer(HandleHttp, "http://+:5000/");
+            srv.Run();
+        }
+
+        private string HandleHttp(HttpListenerRequest request, HttpListenerResponse response)
+        {
+            switch (request.Url.AbsolutePath)
+            {
+                case "/":
+                    if (File.Exists("html/index.html"))
+                        return File.ReadAllText("html/index.html");
+                    response.Redirect($"http://mtglt.redpoint.games/?url={Uri.EscapeUriString(request.UserHostAddress)}");
+                    return null;
+                case "/totals.json":
+                    break;
+                case "/names.json":
+                    return JsonConvert.SerializeObject(new {
+                        player1 = Player_1.GetPlayerName(),
+                        player2 = Player_2.GetPlayerName(),
+                        player3 = Player_3.GetPlayerName(),
+                        player4 = Player_4.GetPlayerName(),
+                    });
+                case "/set":
+                    if (request.HasEntityBody)
+                    {
+                        var data = JsonConvert.DeserializeObject<SetRequest>(request.GetRequestPostData());
+                        if (data.player == 0)
+                        {
+                            return JsonError("Missing key `player`");
+                        }
+                        var grid = GetPlayerGrids().ElementAt(data.player - 1);
+                        if (!data.commander.HasValue || data.commander == 0)
+                        {
+                            Dispatcher.Invoke(() => grid.GetLifeButton().LifeTotal += data.change);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        return JsonError("POST json not found.");
+                    }
+                    break;
+                case "/l1":
+                    return Player_1.GetLifeButton().LifeTotal.ToString();
+                case "/l2":
+                    return Player_2.GetLifeButton().LifeTotal.ToString();
+                case "/l3":
+                    return Player_3.GetLifeButton().LifeTotal.ToString();
+                case "/l4":
+                    return Player_4.GetLifeButton().LifeTotal.ToString();
+
+                default:
+                    if (File.Exists("html" + request.Url.AbsolutePath))
+                    {
+                        return File.ReadAllText("html" + request.Url.AbsolutePath);
+                    }
+                    return JsonError("Wat");
+            }
+            return JsonConvert.SerializeObject(new
+            {
+                player1 = Player_1.GetLifeButton().LifeTotal,
+                player2 = Player_2.GetLifeButton().LifeTotal,
+                player3 = Player_3.GetLifeButton().LifeTotal,
+                player4 = Player_4.GetLifeButton().LifeTotal
+            });
+        }
+
+        private static string JsonError(string error)
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                error = error
+            });
+        }
+
+        IEnumerable<Grid> GetPlayerGrids()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                var task = Dispatcher.InvokeAsync(GetPlayerGrids);
+                task.Wait();
+                return task.Result;
+            }
+            return RootGrid.Children.OfType<Grid>().ToArray();
         }
 
         private static string GetPlayerNumber(object sender)
@@ -56,7 +146,6 @@ namespace LifeCounter
             }
         }
 
-
         private void playerNameChanged(object sender, TextChangedEventArgs e)
         {
             var playerNumber = GetPlayerNumber(sender);
@@ -85,5 +174,12 @@ namespace LifeCounter
                 }
             }
         }
+
+        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
     }
 }

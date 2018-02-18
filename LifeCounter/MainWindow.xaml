@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LifeCounter"
         mc:Ignorable="d"
         Title="MainWindow" Height="518" Width="566">
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid x:Name="Player_1" HorizontalAlignment="Left" Height="220.5" Margin="10,10,0,0" VerticalAlignment="Top" Width="266" d:LayoutOverrides="HorizontalAlignment">
             <local:LifeButton Margin="0,0,68,52.5" PropertyChanged="LifeButton_PropertyChanged"/>
             <local:CommanderDamage HorizontalAlignment="Right" Height="47.5" Margin="0,0,68,52.5" VerticalAlignment="Bottom" Width="63"  PropertyChanged="LifeButton_PropertyChanged"/>
@@ -43,6 +43,8 @@
             <TextBox x:Name="textBox3_Copy1" HorizontalAlignment="Right" Height="22" TextWrapping="Wrap" Text="Player 4" VerticalAlignment="Top" Width="108" TextChanged="playerNameChanged" AutomationProperties.HelpText="Player Name" Tag="Name"/>
             <TextBox x:Name="textBox3_Copy2" HorizontalAlignment="Right" Height="22" TextWrapping="Wrap" Text="Commander" VerticalAlignment="Top" Width="108" TextChanged="playerNameChanged" Margin="0,25.5,0,0" Tag="cmdr"/>
         </Grid>
-        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="22" Margin="213,460,0,0" TextWrapping="Wrap" Text="CardLookup" VerticalAlignment="Top" Width="155" KeyDown="textBox1_KeyDown"/>
+        <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="22" Margin="213,460,0,0" TextWrapping="Wrap" Text="CardLookup" VerticalAlignment="Top" Width="155" KeyDown="textBox1_KeyDown" Visibility="Hidden"/>
+        <Button x:Name="settingsButton" Content="⚙️" HorizontalAlignment="Right" Height="15" Margin="0,0,0,0" VerticalAlignment="Top" Width="15" FontSize="8" Click="settingsButton_Click"/>
+        <Menu x:Name="menu" HorizontalAlignment="Left" Height="100" Margin="636,33,-178,0" VerticalAlignment="Top" Width="100"/>
     </Grid>
 </Window>

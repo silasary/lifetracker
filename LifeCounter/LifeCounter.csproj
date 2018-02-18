@@ -62,9 +62,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommanderDamage.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="ScaleFontBehavior.cs" />
     <Compile Include="Scryfall\Card.cs" />
     <Compile Include="Scryfall\Scryfall.cs" />
+    <Compile Include="SetRequest.cs" />
+    <Compile Include="Webserver.cs" />
     <Page Include="LifeButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -112,6 +115,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
