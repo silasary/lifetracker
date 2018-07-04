@@ -21,8 +21,8 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <Button x:Name="addLife" Grid.ColumnSpan="2" Margin="0,0,0,0" d:LayoutOverrides="Height" Click="addLife_Click" Background="#00DDDDDD" Opacity="0.3"/>
-                <Button x:Name="removeLife" Grid.ColumnSpan="2" Content="" Grid.Row="1" d:LayoutOverrides="Height" Margin="0,0,0,0" Click="removeLife_Click" Background="#00DDDDDD" Opacity="0.3"/>
+                <Button x:Name="addLife" Grid.ColumnSpan="2" Margin="0,0,0,0" d:LayoutOverrides="Height" Click="AddLife_Click" Background="#00DDDDDD" Opacity="0.3"/>
+                <Button x:Name="removeLife" Grid.ColumnSpan="2" Content="" Grid.Row="1" d:LayoutOverrides="Height" Margin="0,0,0,0" Click="RemoveLife_Click" Background="#00DDDDDD" Opacity="0.3"/>
             </Grid>
         </Grid>
     </Viewbox>

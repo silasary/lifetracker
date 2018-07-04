@@ -54,12 +54,12 @@ namespace LifeCounter
 
         #endregion
 
-        protected virtual void addLife_Click(object sender, RoutedEventArgs e)
+        protected virtual void AddLife_Click(object sender, RoutedEventArgs e)
         {
             LifeTotal++;
         }
 
-        protected virtual void removeLife_Click(object sender, RoutedEventArgs e)
+        protected virtual void RemoveLife_Click(object sender, RoutedEventArgs e)
         {
             LifeTotal--;
         }

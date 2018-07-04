@@ -2,10 +2,13 @@
 using System.Net;
 using System.Threading;
 using System.Text;
+using System.Diagnostics;
+using System.Windows;
+using System.Linq;
 
 namespace LifeCounter
 {
-    public class WebServer
+    public class WebServer : IDisposable
     {
         private readonly HttpListener _listener = new HttpListener();
         private readonly Func<HttpListenerRequest, HttpListenerResponse, string> _responderMethod;
@@ -16,8 +19,6 @@ namespace LifeCounter
                 throw new NotSupportedException(
                     "Needs Windows XP SP2, Server 2003 or later.");
 
-            // URI prefixes are required, for example 
-            // "http://localhost:8080/index/".
             if (prefixes == null || prefixes.Length == 0)
                 throw new ArgumentException(nameof(prefixes));
 
@@ -25,7 +26,18 @@ namespace LifeCounter
                 _listener.Prefixes.Add(s);
 
             _responderMethod = method ?? throw new ArgumentException(nameof(method));
-            _listener.Start();
+            try
+            {
+                _listener.Start();
+            }
+            catch (HttpListenerException c)
+            {
+                var pre = prefixes.Single();
+                Process.Start(new ProcessStartInfo("netsh", $"http add urlacl url={pre} user=everyone")
+                {
+                    Verb = "runas"
+                });
+            }
         }
 
         public WebServer(Func<HttpListenerRequest, HttpListenerResponse, string> method, params string[] prefixes)
@@ -52,16 +64,17 @@ namespace LifeCounter
                             }
                             try
                             {
-                                string rstr = _responderMethod(ctx.Request, ctx.Response);
+                                var rstr = _responderMethod(ctx.Request, ctx.Response);
                                 if (rstr == null)
                                     return;
-                                byte[] buf = Encoding.UTF8.GetBytes(rstr);
+                                var buf = Encoding.UTF8.GetBytes(rstr);
                                 ctx.Response.ContentLength64 = buf.Length;
                                 ctx.Response.OutputStream.Write(buf, 0, buf.Length);
                             }
-                            catch (Exception exception) {
+                            catch (Exception exception)
+                            {
                                 ctx.Response.StatusCode = 500;
-                                byte[] buf = Encoding.UTF8.GetBytes(exception.ToString());
+                                var buf = Encoding.UTF8.GetBytes(exception.ToString());
                                 ctx.Response.ContentLength64 = buf.Length;
                                 ctx.Response.OutputStream.Write(buf, 0, buf.Length);
 
@@ -76,12 +89,30 @@ namespace LifeCounter
                 }
                 catch { } // suppress any exceptions
             });
+            ThreadPool.QueueUserWorkItem((c) =>
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(3));
+                try
+                {
+                    var p = Process.Start("ngrok", "http 5000");
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Couldn't create ngrok tunnel");
+                }
+            });
         }
 
         public void Stop()
         {
             _listener.Stop();
             _listener.Close();
+        }
+
+        public void Dispose()
+        {
+            Stop();
+            GC.SuppressFinalize(this);
         }
     }
 }

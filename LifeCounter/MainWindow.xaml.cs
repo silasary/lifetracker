@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -72,13 +73,21 @@ namespace LifeCounter
                     break;
                 case "/l1":
                     return Player_1.GetLifeButton().LifeTotal.ToString();
+                case "/n1":
+                    return Player_1.GetPlayerName();
                 case "/l2":
                     return Player_2.GetLifeButton().LifeTotal.ToString();
+                case "/n2":
+                    return Player_2.GetPlayerName();
                 case "/l3":
                     return Player_3.GetLifeButton().LifeTotal.ToString();
+                case "/n3":
+                    return Player_3.GetPlayerName();
                 case "/l4":
                     return Player_4.GetLifeButton().LifeTotal.ToString();
-
+                case "/n4":
+                    return Player_4.GetPlayerName();
+                case "/card.jpg":
                 default:
                     if (File.Exists("html" + request.Url.AbsolutePath))
                     {
@@ -99,7 +108,7 @@ namespace LifeCounter
         {
             return JsonConvert.SerializeObject(new
             {
-                error = error
+                error
             });
         }
 
@@ -146,7 +155,7 @@ namespace LifeCounter
             }
         }
 
-        private void playerNameChanged(object sender, TextChangedEventArgs e)
+        private void PlayerNameChanged(object sender, TextChangedEventArgs e)
         {
             var playerNumber = GetPlayerNumber(sender);
             var textBox = (sender as TextBox);
@@ -156,7 +165,7 @@ namespace LifeCounter
             File.WriteAllText($"{playerNumber}_{label}.txt", textBox.Text);
         }
 
-        private async void textBox1_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private async void TextBox1_KeyDownAsync(object sender, System.Windows.Input.KeyEventArgs e)
         {
             const string FILENAME = "card.jpg";
             if (e.Key == System.Windows.Input.Key.Enter)
@@ -175,7 +184,7 @@ namespace LifeCounter
             }
         }
 
-        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
 
         }

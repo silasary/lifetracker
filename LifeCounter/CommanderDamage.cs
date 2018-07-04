@@ -28,15 +28,15 @@ namespace LifeCounter
             LifeTotal = 0;
         }
 
-        protected override void addLife_Click(object sender, RoutedEventArgs e)
+        protected override void AddLife_Click(object sender, RoutedEventArgs e)
         {
-            base.addLife_Click(sender, e);
+            base.AddLife_Click(sender, e);
             LinkedCounter.LifeTotal--;
         }
 
-        protected override void removeLife_Click(object sender, RoutedEventArgs e)
+        protected override void RemoveLife_Click(object sender, RoutedEventArgs e)
         {
-            base.removeLife_Click(sender, e);
+            base.RemoveLife_Click(sender, e);
             LinkedCounter.LifeTotal++;
         }
     }
